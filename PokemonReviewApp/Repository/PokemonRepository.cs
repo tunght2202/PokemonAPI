@@ -5,7 +5,7 @@ using System.Reflection.Metadata.Ecma335;
 
 namespace PokemonReviewApp.Repository
 {
-    public class PokemonRepository : iPokemonRepository
+    public class PokemonRepository : IPokemonRepository
     {
         private readonly DataContext _context;
 

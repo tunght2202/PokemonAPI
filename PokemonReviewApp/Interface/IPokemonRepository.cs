@@ -2,7 +2,7 @@
 
 namespace PokemonReviewApp.Interface
 {
-    public interface iPokemonRepository
+    public interface IPokemonRepository
     {
         ICollection<Pokemon> GetPokemons();
         Pokemon GetPokemon(int id);
