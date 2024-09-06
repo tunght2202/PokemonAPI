@@ -14,12 +14,15 @@ namespace PokemonReviewApp.Controllers
         private readonly IOwnerRepository _ownerRepository;
         private readonly IMapper _mapper;
         private readonly IPokemonRepository _pokemonRepository;
+        private readonly ICountryRepository _countryRepository;
 
-        public OwnerController(IOwnerRepository ownerRepository, IMapper mapper, IPokemonRepository pokemonRepository )
+        public OwnerController(IOwnerRepository ownerRepository, IMapper mapper,
+            IPokemonRepository pokemonRepository ,ICountryRepository countryRepository)
         {
             _ownerRepository = ownerRepository;
             _mapper = mapper;
             _pokemonRepository = pokemonRepository;
+            _countryRepository = countryRepository;
         }
         [HttpGet]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Owner>))]
@@ -90,6 +93,31 @@ namespace PokemonReviewApp.Controllers
             }
 
             return Ok(pokemons);
+        }
+
+        [HttpPost]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        public IActionResult CreateCountry([FromQuery] int countryId , [FromBody] OwnerDto ownerCreate)
+        {
+            if (ownerCreate == null)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var ownerMap = _mapper.Map<Owner>(ownerCreate);
+            ownerMap.Country = _countryRepository.GetCountry(countryId);
+            if (!_ownerRepository.CreateOwner(ownerMap))
+            {
+                ModelState.AddModelError("", "Something went wrong while saving");
+                return StatusCode(500, ModelState);
+            }
+
+            return Ok("Successfully created");
+
         }
     }
 }
